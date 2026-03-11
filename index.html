@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>小学语文要素全景图</title>
+  <style>
+    :root{
+      --bd:#e5e7eb; --txt:#111827; --muted:#6b7280; --bg:#f9fafb;
+      --card:#ffffff;
+      --kw-bg:#fff3b0; --kw-txt:#7a4b00;
+      --active-bg:#111827; --active-txt:#ffffff;
+      --focus-outline:#11182722;
+    }
+    body{
+      margin:0; background:var(--bg); color:var(--txt);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC","Microsoft YaHei", Arial;
+    }
+    .wrap{ max-width:1280px; margin:18px auto; padding:0 14px; }
+    .topbar{
+      background:var(--card); border:1px solid var(--bd); border-radius:14px;
+      padding:12px 12px; display:flex; gap:10px; align-items:center; justify-content:space-between;
+      position:sticky; top:10px; z-index:10;
+      box-shadow:0 1px 0 rgba(17,24,39,0.02);
+    }
+    .title{ font-size:16px; font-weight:700; }
+    .sub{ font-size:12px; color:var(--muted); margin-top:2px; }
+    .right{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+    .pill{
+      border:1px solid var(--bd); background:#fff; color:var(--txt);
+      padding:7px 10px; border-radius:999px; font-size:12px; cursor:pointer; user-select:none;
+      font-family:inherit; line-height:1; appearance:none; -webkit-appearance:none;
+    }
+    .pill:active{ transform:translateY(1px); }
+    .pill:focus-visible{ outline:2px solid #2563eb33; outline-offset:2px; }
+    .pill.primary{ background:var(--txt); color:#fff; border-color:var(--txt); }
+    .scroll{ overflow:auto; border-radius:14px; margin-top:12px; max-height: calc(100vh - 110px); border:1px solid var(--bd); background:var(--card); }
+    table{
+      width:100%; border-collapse:separate; border-spacing:0;
+      background:var(--card); border:none; border-radius:14px; overflow:hidden;
+      min-width:1120px;
+    }
+    caption{
+      caption-side:top;
+      text-align:left;
+      padding:10px 12px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    th, td{
+      border-bottom:1px solid var(--bd);
+      border-right:1px solid var(--bd);
+      padding:10px 10px;
+      vertical-align:top;
+      font-size:13px;
+    }
+    th{
+      background:#f3f4f6; font-weight:700; text-align:left; white-space:nowrap;
+      position:sticky; top:0; z-index:2;
+    }
+    th.sticky-left{
+      left:0; z-index:3; position:sticky;
+      box-shadow: 1px 0 0 rgba(229,231,235,1);
+    }
+    td:first-child, th.sticky-left{ background:#f3f4f6; }
+    tr:last-child td{ border-bottom:none; }
+    th:last-child, td:last-child{ border-right:none; }
+
+    .cell{ display:flex; flex-direction:column; gap:8px; min-height:62px; }
+    .items{ display:flex; flex-direction:column; gap:6px; }
+    .item{
+      line-height:1.45;
+      padding:8px 10px;
+      border:1px solid var(--bd);
+      border-radius:12px;
+      background:#fff;
+    }
+    .item.empty{ color:var(--muted); }
+    .kw{
+      background:var(--kw-bg);
+      color:var(--kw-txt);
+      padding:1px 4px;
+      border-radius:6px;
+      cursor:pointer;
+      border:none;
+      font:inherit;
+      line-height:inherit;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+    .kw:hover{ filter:brightness(0.98); }
+    .kw:focus-visible{ outline:2px solid #2563eb55; outline-offset:1px; }
+    .kw.active{ background:var(--active-bg); color:var(--active-txt); }
+    .kw.weak{ background:#e5e7eb; color:#374151; }
+
+    td.dim{ background:#fafafa; }
+    td.dim .cell{ opacity:0.18; filter: grayscale(1); transition: opacity .15s ease; }
+    td.focus .cell{ outline:2px solid var(--focus-outline); outline-offset:2px; border-radius:10px; }
+    td.focus-weak .cell{ outline:2px dashed #11182722; outline-offset:2px; border-radius:10px; }
+    .legend{ font-size:12px; color:var(--muted); }
+  
+    .layout{ display:flex; gap:12px; align-items:flex-start; }
+    .sidebar{
+      width:220px; flex:0 0 220px;
+      background:var(--card); border:1px solid var(--bd); border-radius:14px;
+      padding:10px; position:sticky; top:86px; max-height: calc(100vh - 110px);
+      overflow:auto;
+    }
+    .side-title{ font-size:13px; font-weight:700; margin:2px 2px 8px; }
+    .side-note{ font-size:12px; color:var(--muted); margin:0 2px 10px; line-height:1.35; }
+    .theme{
+      border:1px solid var(--bd); background:#fff; color:var(--txt);
+      padding:8px 10px; border-radius:12px; cursor:pointer; user-select:none;
+      font-size:13px; line-height:1.2; margin-bottom:8px; text-align:left;
+      width:100%; font-family:inherit; appearance:none; -webkit-appearance:none;
+    }
+    .theme:hover{ filter:brightness(0.99); }
+    .theme:focus-visible{ outline:2px solid #2563eb33; outline-offset:2px; }
+    .theme.active{ background:var(--txt); color:#fff; border-color:var(--txt); }
+    .theme small{ display:block; margin-top:6px; font-size:12px; color:rgba(255,255,255,0.85); }
+    .theme:not(.active) small{ color:var(--muted); }
+    .main{ flex:1 1 auto; min-width: 700px; }
+
+    @media (max-width: 960px){
+      .topbar{ position:static; }
+      .layout{ flex-direction:column; }
+      .sidebar{
+        width:100%; flex:1 1 auto; position:static; top:auto; max-height:none;
+        overflow-x:auto; overflow-y:hidden;
+      }
+      #themeList{ display:flex; gap:8px; min-width:max-content; }
+      .theme{ width:auto; margin-bottom:0; flex:0 0 auto; white-space:nowrap; }
+      .main{ min-width:0; }
+      .scroll{ max-height:calc(100vh - 260px); }
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <div class="title">小学语文要素全景图</div>
+        <div class="sub" id="status" role="status" aria-live="polite">点击任意高亮词：相关单元保持清晰，其它单元变浅；再次点击取消。</div>
+      </div>
+      <div class="right">
+        <span class="legend" id="activeLabel">当前：全部</span>
+        <button type="button" class="pill" id="modeBtn" aria-pressed="true">高亮：主题链</button>
+        <button type="button" class="pill" id="clearBtn">清除筛选</button>
+        <button type="button" class="pill primary" id="collapseBtn" aria-pressed="false">卡片收起/展开</button>
+      </div>
+    </div>
+
+    
+    <div class="layout">
+      <div class="sidebar" role="region" aria-label="主题链筛选">
+        <div class="side-title">主题链入口</div>
+        <div class="side-note">点主题：整条能力链联动高亮；再点一次取消。</div>
+        <div id="themeList" role="group" aria-label="主题链按钮组"></div>
+      </div>
+      <div class="main">
+<div class="scroll" aria-label="小学语文要素表格横向滚动区域">
+      <div id="grid"></div>
+    </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  const SEMESTERS = ["一上", "一下", "二上", "二下", "三上", "三下", "四上", "四下", "五上", "五下", "六上", "六下"];
+  const UNITS = ["一", "二", "三", "四", "五", "六", "七", "八"];
+  const DATA = {"一上-一": [{"text": "借助听读和联系生活经验来学习汉字", "keywords": ["联系生活"]}, {"text": "和大人一起读故事，体验识字的价值", "keywords": []}, {"text": "培养学生写字和朗读的习惯", "keywords": ["朗读"]}], "一上-二": [{"text": "认识掌握声母、单韵母拼读、两拼三拼", "keywords": []}], "一上-三": [{"text": "复韵母标调规则、拼读规则及后鼻韵母", "keywords": []}], "一上-四": [{"text": "重视朗读基本功的训练，用普通话朗读，读准字音，重点读好“一”的读音", "keywords": ["朗读"]}], "一上-五": [{"text": "认识会意字", "keywords": []}, {"text": "进一步了解汉字偏旁表义的构字规律", "keywords": []}], "一上-六": [{"text": "结合偏旁进行归类识字的方法", "keywords": []}, {"text": "指导读好疑问、陈述句针对性朗读训练", "keywords": ["朗读"]}, {"text": "认识句子", "keywords": []}], "一上-七": [{"text": "联系生活实际", "keywords": ["联系生活"]}, {"text": "理解课文内容", "keywords": []}, {"text": "“的”字词语的合理搭配", "keywords": []}], "一上-八": [{"text": "能找出课文中明显的信息", "keywords": []}, {"text": "借助图画阅读课文", "keywords": ["阅读"]}, {"text": "初步认识自然段", "keywords": []}], "一下-一": [{"text": "加深对形声字识字方法的了解", "keywords": []}], "一下-二": [{"text": "找出文中明显的信息", "keywords": []}, {"text": "学习读好词语和句子的节奏", "keywords": []}], "一下-三": [{"text": "联系上文了解词语的意思", "keywords": []}, {"text": "词句的积累和运用", "keywords": ["积累"]}], "一下-四": [{"text": "读好长句子", "keywords": []}, {"text": "语言的积累", "keywords": ["积累"]}, {"text": "根据课文信息作简单推断，并联系生活实际进行表达", "keywords": ["表达", "联系生活"]}], "一下-五": [{"text": "形声字识字方法熟练运用", "keywords": []}], "一下-六": [{"text": "联系生活实际了解词语的意思", "keywords": ["联系生活"]}], "一下-七": [{"text": "根据课文信息做简单推断", "keywords": []}, {"text": "读好疑问句和祈使句", "keywords": []}, {"text": "关注长课文的学习", "keywords": []}], "一下-八": [{"text": "借助图画阅读课文", "keywords": ["阅读"]}, {"text": "读好祈使句的语气，读好多个角色的对话，根据信息作简单推断", "keywords": []}], "二上-一": [{"text": "积累并运用表示动作的词语", "keywords": ["积累"]}, {"text": "借助图片了解课文内容", "keywords": []}], "二上-二": [{"text": "继续发现汉字规律", "keywords": []}, {"text": "运用形声字形旁表义、声旁表音的特点归类识字", "keywords": []}], "二上-三": [{"text": "阅读课文", "keywords": ["阅读"]}, {"text": "能说出自己的感受或想法", "keywords": []}, {"text": "借助词句", "keywords": []}, {"text": "尝试讲述课文内容", "keywords": []}, {"text": "第一次正式写话基本要求", "keywords": []}], "二上-四": [{"text": "联系上下文和生活经验了解词句意思", "keywords": []}, {"text": "学习课文语言表达", "keywords": ["表达"]}, {"text": "积累语言", "keywords": ["积累"]}, {"text": "学写留言条", "keywords": []}], "二上-五": [{"text": "初步体会课文讲述道理", "keywords": []}, {"text": "感受和体会语言表达的多样性", "keywords": ["表达"]}, {"text": "学习表达", "keywords": ["表达"]}], "二上-六": [{"text": "借助词句了解课文内容", "keywords": []}, {"text": "根据声旁表音功能猜字", "keywords": []}, {"text": "借助图画阅读，了解故事内容", "keywords": ["阅读"]}], "二上-七": [{"text": "展开想象，获得初步情感体验", "keywords": ["情感", "想象"]}, {"text": "试着做到不出声默读(雪孩子)", "keywords": ["默读"]}, {"text": "展开想象，续编故事", "keywords": ["想象"]}], "二上-八": [{"text": "综合运用多种方法自主识字", "keywords": []}, {"text": "借助提示复述课文", "keywords": ["复述"]}, {"text": "学习默读，巩固默读方法", "keywords": ["默读"]}], "二下-一": [{"text": "朗读课文，注意语气和重音", "keywords": ["朗读"]}], "二下-二": [{"text": "读句子，想象画面", "keywords": ["想象"]}, {"text": "试着有感情地朗读课文", "keywords": ["朗读"]}], "二下-三": [{"text": "形旁表义功能的强化识字", "keywords": []}, {"text": "发现相似偏旁之间的关联", "keywords": []}], "二下-四": [{"text": "运用学到的词语把想象的内容写下来", "keywords": ["想象"]}, {"text": "默读主，集中注意力，不出声，不动唇，不指读", "keywords": ["默读"]}], "二下-五": [{"text": "根据课文内容，谈谈简单看法", "keywords": []}, {"text": "引导学生读好对话的语气", "keywords": []}], "二下-六": [{"text": "提取主要信息", "keywords": ["提取"]}, {"text": "了解课文内容", "keywords": []}, {"text": "联系生活经验", "keywords": ["联系生活"]}, {"text": "了解课文内容", "keywords": []}], "二下-七": [{"text": "借助提示讲故事", "keywords": []}], "二下-八": [{"text": "根据课文内容展开想象", "keywords": ["想象"]}], "三上-一": [{"text": "阅读时关注有新鲜感的词语和句子", "keywords": ["阅读"]}, {"text": "体会习作的乐趣", "keywords": ["习作"]}, {"text": "(第一次习作)", "keywords": ["习作"]}], "三上-二": [{"text": "运用多种方法理解难懂的词语", "keywords": []}, {"text": "学习写日记", "keywords": ["写日记"]}], "三上-三": [{"text": "感受童话丰富的想象", "keywords": ["想象"]}, {"text": "试着自己编童话、写童话", "keywords": []}], "三上-四": [{"text": "一边读一边预测，顺着故事猜想内容，学习预测的基本方法", "keywords": []}, {"text": "续写故事", "keywords": []}], "三上-五": [{"text": "体会作者是怎样留心观察周围事物的", "keywords": ["观察"]}, {"text": "仔细观察，把观察所得写下来", "keywords": ["观察"]}], "三上-六": [{"text": "借助关键语句理解一段话的意思", "keywords": []}, {"text": "习作的时候，试着围绕着一个意思写", "keywords": ["习作"]}], "三上-七": [{"text": "感受课文生动的语言", "keywords": []}, {"text": "积累喜欢的语句", "keywords": ["积累"]}, {"text": "留心生活，把自己的想法记录下来", "keywords": []}], "三上-八": [{"text": "学习带着问题默读", "keywords": ["默读"]}, {"text": "理解课文的意思", "keywords": []}, {"text": "学写一件简单的事", "keywords": []}], "三下-一": [{"text": "试着一边读一边想象画面", "keywords": ["想象"]}, {"text": "体会优美生动的语句，试着把观察到的事物写清楚", "keywords": ["观察"]}], "三下-二": [{"text": "读寓言，明白其中的道理", "keywords": []}, {"text": "把图画的内容写清楚", "keywords": []}], "三下-三": [{"text": "了解课文是怎么围绕一个意思把一段话写清楚的", "keywords": []}, {"text": "收集传统节日的资料，交流节日的风俗习惯，写一写过节的过程", "keywords": ["交流"]}], "三下-四": [{"text": "借助关键语句概括一段话的大意", "keywords": ["概括"]}, {"text": "观察事物的变化，把实验过程写清楚", "keywords": ["观察"]}], "三下-五": [{"text": "走进想象世界", "keywords": ["想象"]}, {"text": "感受想象的神奇", "keywords": ["想象"]}, {"text": "发挥想象写故事，创造自己的想象世界", "keywords": ["想象"]}], "三下-六": [{"text": "运用多种方法理解难懂的句子", "keywords": []}, {"text": "写一个身边的人", "keywords": []}, {"text": "尝试写出他(她)的特点", "keywords": []}], "三下-七": [{"text": "了解课文从哪几方面把事情写清楚的", "keywords": []}, {"text": "初步学习整合信息，介绍一种事物", "keywords": []}], "三下-八": [{"text": "了解故事的主要内容", "keywords": ["主要内容"]}, {"text": "复述故事", "keywords": ["复述"]}, {"text": "根据提示，展开想象，尝试编童话故事", "keywords": ["想象"]}], "四上-一": [{"text": "边读边想象画面", "keywords": ["想象"]}, {"text": "感受自然之美", "keywords": []}, {"text": "推荐一个地方", "keywords": []}, {"text": "写清楚推荐理由", "keywords": []}], "四上-二": [{"text": "阅读时尝试从不同角度去思考，提出自己的问题", "keywords": ["阅读"]}, {"text": "写一个人，注意把印象最深的地方写出来", "keywords": []}], "四上-三": [{"text": "体会文章准确生动的表达", "keywords": ["表达"]}, {"text": "感受作者连续细致的观察", "keywords": ["观察"]}, {"text": "进行连续观察，学写观察日记", "keywords": ["观察"]}], "四上-四": [{"text": "了解故事的起因、经过、结果，学习把握文章的主要内容，感受神话中神奇的想象和鲜明的人物形象，展开想象，写一个故事", "keywords": ["主要内容", "人物", "想象"]}], "四上-五": [{"text": "了解作者是怎样把事情写清楚的，写一件事，把事情写清楚", "keywords": []}], "四上-六": [{"text": "学习用批注的方法阅读", "keywords": ["阅读"]}, {"text": "通过人物的动作、语言、神态体会人物的心情", "keywords": ["人物"]}, {"text": "记一次游戏，把游戏过程写清楚", "keywords": []}], "四上-七": [{"text": "关注主要人物和事件", "keywords": ["人物"]}, {"text": "学习把握文章的主要内容", "keywords": ["主要内容"]}, {"text": "学习写书信", "keywords": []}], "四上-八": [{"text": "了解故事情节，简要复述课文", "keywords": ["复述", "简要复述", "情节", "故事情节"]}, {"text": "写一件事", "keywords": []}, {"text": "能写出自己的感受", "keywords": []}], "四下-一": [{"text": "抓住关键词句", "keywords": ["关键词"]}, {"text": "初步体会课文表达的思想感情", "keywords": ["思想感情", "表达"]}, {"text": "写自己喜爱的某个地方，表达出自己的感受", "keywords": ["表达"]}], "四下-二": [{"text": "阅读时能提出不懂的问题，并试着解决", "keywords": ["阅读"]}, {"text": "展开奇思妙想", "keywords": []}, {"text": "写一写自己想发明的东西", "keywords": []}], "四下-三": [{"text": "初步了解现代诗的一些特点", "keywords": []}, {"text": "体会诗歌的情感", "keywords": ["情感"]}, {"text": "根据需要收集资料", "keywords": []}, {"text": "初步学习整理材料的方法", "keywords": []}, {"text": "合作编小诗集，举办诗歌朗诵会", "keywords": []}], "四下-四": [{"text": "体会作家是如何表达对动物的感情的", "keywords": ["表达"]}, {"text": "写自己喜欢的动物，试着写出特点", "keywords": []}], "四下-五": [{"text": "了解课文按一定顺序写景物的方法", "keywords": ["写景"]}, {"text": "学习按游览的顺序写景物", "keywords": ["写景"]}], "四下-六": [{"text": "学习怎样把握长文章的主要内容", "keywords": ["主要内容"]}, {"text": "按一定顺序把事情的过程写清楚", "keywords": []}], "四下-七": [{"text": "从人物的语言、动作等描写中感受人物的品质", "keywords": ["人物", "品质", "描写"]}, {"text": "学习用多种方法写出人物特点", "keywords": ["人物"]}], "四下-八": [{"text": "感受童话的奇妙", "keywords": []}, {"text": "体会人物真善美的形象", "keywords": ["人物"]}, {"text": "按自己的想法新编故事", "keywords": []}], "五上-一": [{"text": "初步了解课文借助具体事物抒发感情的方法", "keywords": []}, {"text": "写一种事物，表达自己的感情", "keywords": ["表达"]}], "五上-二": [{"text": "学习提高阅读速度的方法", "keywords": ["阅读"]}, {"text": "结合具体事例写出人物的特点", "keywords": ["人物"]}], "五上-三": [{"text": "了解课文内容，创造性地复述故事", "keywords": ["复述"]}, {"text": "提取主要信息", "keywords": ["提取"]}, {"text": "缩写故事", "keywords": ["缩写"]}], "五上-四": [{"text": "结合资料", "keywords": []}, {"text": "体会课文表达的思想感情", "keywords": ["思想感情", "表达"]}, {"text": "学习列提纲，分段叙述", "keywords": []}], "五上-五": [{"text": "阅读简单的说明性文章", "keywords": ["阅读", "说明"]}, {"text": "了解基本的说明方法", "keywords": ["说明"]}, {"text": "搜集资料，用恰当的说明方法，把某一种事物介绍清楚", "keywords": ["说明"]}], "五上-六": [{"text": "注意体会作者描写的场景、细节中蕴含的感情", "keywords": ["描写"]}, {"text": "用恰当的语言表达自己的看法和感受", "keywords": ["表达"]}], "五上-七": [{"text": "初步体会课文中静态描写和动态描写", "keywords": ["描写"]}, {"text": "学习描写景物的变化", "keywords": ["描写", "写景"]}], "五上-八": [{"text": "阅读时注意梳理信息", "keywords": ["阅读"]}, {"text": "把握内容要点", "keywords": ["要点"]}, {"text": "根据表达的需要，分段表述，突出重点", "keywords": ["表达"]}], "五下-一": [{"text": "体会课文表达的思想感情", "keywords": ["思想感情", "表达"]}, {"text": "把一件事的重点部分写具体", "keywords": []}], "五下-二": [{"text": "初步学习阅读古典名著的方法", "keywords": ["阅读"]}, {"text": "学习写读后感", "keywords": []}], "五下-三": [{"text": "感受汉字的有趣，了解汉字文化，学习搜集资料的基本方法", "keywords": []}, {"text": "学写简单的研究报告", "keywords": []}], "五下-四": [{"text": "通过动作、语言、神态的描写", "keywords": ["描写"]}, {"text": "体会人物的内心", "keywords": ["人物"]}, {"text": "尝试运用动作、语言、神态描写，来表现人物的内心", "keywords": ["人物", "描写"]}], "五下-五": [{"text": "学习描写人物基本方法", "keywords": ["人物", "描写", "写人"]}, {"text": "初步运用描写人物的基本方法", "keywords": ["人物", "描写", "写人"]}, {"text": "尝试把一个人的特点写具体", "keywords": []}], "五下-六": [{"text": "了解人物的思维过程，加深对课文的理解", "keywords": ["人物"]}, {"text": "根据情境编故事，注意情节的曲折", "keywords": ["情节"]}], "五下-七": [{"text": "体会景物的静态美和动态美", "keywords": []}, {"text": "搜集资料，介绍一个地方", "keywords": []}], "五下-八": [{"text": "感受课文风趣的语言", "keywords": []}, {"text": "看漫画，写出自己的想法", "keywords": []}], "六上-一": [{"text": "阅读时能从所读的内容想开去", "keywords": ["阅读"]}, {"text": "习作时发挥想象，把重点部分写得详细一些", "keywords": ["习作", "想象"]}], "六上-二": [{"text": "了解文章是怎样点面结合写场面的", "keywords": []}, {"text": "尝试运用点面结合的写法记一次活动", "keywords": []}], "六上-三": [{"text": "根据不同的阅读目的，选择恰当的阅读方法", "keywords": ["阅读"]}, {"text": "写生活体验，试着表达自己的看法", "keywords": ["表达"]}], "六上-四": [{"text": "读小说，关注情节、环境，感受人物形象", "keywords": ["情节", "人物"]}, {"text": "发挥想象，创编生活故事", "keywords": ["想象"]}], "六上-五": [{"text": "体会文章是怎样围绕中心意思来写的", "keywords": []}, {"text": "从不同方面或选取不同事例，表达中心意思", "keywords": ["表达"]}], "六上-六": [{"text": "抓住关键句", "keywords": ["关键句"]}, {"text": "把握文章的主要观点", "keywords": []}, {"text": "学写倡议书", "keywords": []}], "六上-七": [{"text": "借助语言文字 展开想象", "keywords": ["想象"]}, {"text": "体会艺术之美", "keywords": []}, {"text": "写自己的拿手把戏，把重点部分写具体", "keywords": []}], "六上-八": [{"text": "借助相关资料", "keywords": []}, {"text": "理解课文主要内容", "keywords": ["主要内容"]}, {"text": "通过事情写一个人，表达出自己的情感", "keywords": ["情感", "表达"]}], "六下-一": [{"text": "分清内容的主次", "keywords": []}, {"text": "体会作者是如何详写主要部分的", "keywords": []}, {"text": "习作时注意抓住重点", "keywords": ["习作"]}, {"text": "写出特点", "keywords": []}], "六下-二": [{"text": "了解梗概，把握名著物主要内容，就印象深刻的人物和情节交流感受", "keywords": ["梗概", "主要内容", "情节", "人物", "交流"]}, {"text": "学习写作品梗概", "keywords": ["梗概", "作品梗概", "写作"]}], "六下-三": [{"text": "体会文章是怎样表达情感的", "keywords": ["情感", "表达"]}, {"text": "习作时，选择合适的内容写出真情实感", "keywords": ["习作"]}], "六下-四": [{"text": "阅读时，关注神态、言行的描写，体会人物品质", "keywords": ["人物", "品质", "阅读", "描写"]}, {"text": "查阅相关资料，加深对课文的理解", "keywords": []}, {"text": "习作时，选择适合的方式进行表述", "keywords": ["习作"]}], "六下-五": [{"text": "体会用具体整合说明观点的方法", "keywords": ["说明"]}, {"text": "展开想象", "keywords": ["想象"]}, {"text": "写科幻故事", "keywords": []}], "六下-六": [{"text": "学习整理材料的方法", "keywords": []}, {"text": "策划简单的校园活动，学写策划书", "keywords": []}]};
+
+  // 主题链（学科逻辑）：
+  // 你可以在这里继续扩充其它主题，例如“思想感情”“关键词”“概括段意”等。
+  
+  const THEMES = {
+    // 1) 叙事与复述链
+    "复述": {
+      explain: "从讲得回去→抓主干→简要复述→缩写/梗概",
+      core: ["复述","简要复述"],
+      trunk: ["故事","故事情节","情节","主要内容","主要信息","要点","起因","经过","结果","起因经过结果","人物","事件","顺序","时间顺序","地点变化"],
+      supports: ["提示","借助提示","关键词","关键句","概括","段意","提取","找信息","结构","连贯"],
+      next: ["缩写","梗概","作品梗概","创造性复述","创造性地复述"]
+    },
+
+    // 2) 想象链
+    "想象": {
+      explain: "从边读边成像→进入想象世界→展开想象再创造",
+      core: ["想象","展开想象"],
+      trunk: ["边读边想象","想象画面","想象世界","想象情境","想象自己","想象写话","想象作文","写童话","写故事","写科幻故事","写想象作文"],
+      supports: ["画面","细节","观察","联想","感受","表达","语言","描写"],
+      next: ["创编故事","改编","续写","科幻故事","童话"]
+    },
+
+    // 3) 人物与品质链
+    "人物品质": {
+      explain: "从看见人物→用证据说品质→写出人物形象",
+      core: ["人物","人物形象","品质"],
+      trunk: ["言行","神态","动作","语言","外貌","心理","通过人物","体会人物品质","评价人物","主要人物","人物和事件"],
+      supports: ["细节","描写","对比","举例","概括","关键句","关键词","体会","理解"],
+      next: ["写人","写事","读后感","名著人物","人物描写"]
+    },
+
+    // 4) 情感与思想感情链
+    "思想感情": {
+      explain: "从抓住证据体会→理解表达效果→写出真情实感",
+      core: ["思想感情","情感","真情实感"],
+      trunk: ["体会课文表达的思想感情","体会文章表达情感","表达情感","感受","感受奇妙","感受美","理解作者","表达感受"],
+      supports: ["关键词","关键词句","关键句","朗读","语气","语调","联系生活","想象","对比"],
+      next: ["写出真情实感","抒情","读后感","写信","写随笔"]
+    },
+
+    // 5) 信息提取与要点概括链
+    "要点概括": {
+      explain: "从段意→要点→主要内容→长文章信息提纯",
+      core: ["概括","要点","主要内容","主要信息"],
+      trunk: ["概括段意","概括一段话的大意","把握文章主要内容","提取主要信息","梳理要点","把握长文章的主要内容","把握课文内容"],
+      supports: ["关键句","关键词","结构","顺序","提取","比较","归纳","整理"],
+      next: ["缩写","梗概","说明要点","汇报表达","写提要"]
+    },
+
+    // 6) 资料查阅与整合表达链
+    "资料整合": {
+      explain: "从会找资料→会整理→用资料加深理解并表达",
+      core: ["查阅资料","收集资料","整理材料"],
+      trunk: ["查阅相关资料","收集资料","整理资料","整理材料的方法","策划","策划书","校园活动","介绍","说明","交流"],
+      supports: ["信息提取","分类","要点","记录","表格","提问","整合"],
+      next: ["综合性学习","项目化学习","主题探究","汇报","策划书"]
+    }
+  };
+
+
+  const TAG_ALIASES = {
+    "关键词句": "关键词",
+    "抓住关键词句": "关键词",
+    "关键语句": "关键句",
+    "提取主要信息": "主要信息",
+    "把握文章的主要内容": "主要内容",
+    "概括一段话的大意": "概括",
+    "简要复述": "复述",
+    "创造性地复述": "创造性复述"
+  };
+
+  function normalizeTag(tag){
+    const raw = String(tag || "").trim();
+    if(!raw) return "";
+    return TAG_ALIASES[raw] || raw;
+  }
+
+  // 主题词原词表：用于从 text 里补抓标签
+  const THEME_TERMS = (() => {
+    const s = new Set();
+    for (const t of Object.values(THEMES)) {
+      [...(t.core||[]), ...(t.trunk||[]), ...(t.supports||[]), ...(t.next||[])].forEach(x => s.add(String(x || "").trim()));
+    }
+    Object.keys(TAG_ALIASES).forEach(x => s.add(x));
+    return Array.from(s).filter(Boolean).sort((a,b)=>b.length-a.length);
+  })();
+
+  function detectThemeTags(text){
+    const src = String(text || "");
+    const matchTags = new Set();
+    const displayTags = new Set();
+    THEME_TERMS.forEach(term => {
+      if (term && src.includes(term)) {
+        displayTags.add(term);
+        matchTags.add(normalizeTag(term));
+      }
+    });
+    return { matchTags, displayTags };
+  }
+
+  // 反向索引：点到任何一个词，都能跳到对应主题链（统一走标准化）
+  const THEME_INDEX = (() => {
+    const idx = {};
+    for (const [name, t] of Object.entries(THEMES)) {
+      const all = [...(t.core||[]), ...(t.trunk||[]), ...(t.supports||[]), ...(t.next||[])];
+      all.forEach(x => {
+        const nx = normalizeTag(x);
+        if (nx && !idx[nx]) idx[nx] = name;
+      });
+      idx[normalizeTag(name)] = name;
+    }
+    return idx;
+  })();
+
+  function getThemeFirstCore(themeName){
+    const t = THEMES[themeName];
+    if(!t || !Array.isArray(t.core)) return null;
+    for (const c of t.core) {
+      const norm = normalizeTag(c);
+      if(norm) return { raw: c, normalized: norm };
+    }
+    return null;
+  }
+
+  function renderThemeList(){
+    const host = document.getElementById("themeList");
+    if(!host) return;
+    host.innerHTML = "";
+    const activeThemeName = mode === "theme" && activeToken
+      ? (THEME_INDEX[normalizeTag(activeToken)] || normalizeTag(activeToken))
+      : null;
+    const names = Object.keys(THEMES);
+    names.forEach(name=>{
+      const btn = document.createElement("button");
+      btn.type = "button";
+      const isActive = (mode === "theme" && activeThemeName === name);
+      btn.className = "theme" + (isActive ? " active" : "");
+      btn.setAttribute("aria-pressed", String(isActive));
+      const ex = (THEMES[name] && THEMES[name].explain) ? THEMES[name].explain : "";
+      btn.innerHTML = `<div>${name}</div><small>${ex}</small>`;
+      btn.addEventListener("click", ()=>{
+        // 点击主题：切到主题链模式，并联动；再点一次取消
+        mode = "theme";
+        const modeBtn = document.getElementById("modeBtn");
+        if(modeBtn){
+          modeBtn.textContent = "高亮：主题链";
+          modeBtn.setAttribute("aria-pressed", "true");
+        }
+        if(activeToken === name) setActive(null, null, null);
+        else setActive(name, name, "theme");
+        renderThemeList();
+      });
+      host.appendChild(btn);
+    });
+  }
+
+  // 高亮模式：theme=主题链；word=词面
+  let mode = "theme";
+  let activeToken = null;   // 主题名或词（内部标准化后的 token）
+  let activeKw = null;      // 记录用户最后点到的词（用于文案显示）
+  let activeSource = null;  // theme | keyword | null
+  let compact = false;
+
+  function getThemeSets(token){
+    // token：主题名或词
+    const normalizedToken = normalizeTag(token);
+    if (mode === "word") {
+      const all = new Set(normalizedToken ? [normalizedToken] : []);
+      return { strong: all, weak: new Set(), all };
+    }
+    const themeName = THEME_INDEX[normalizedToken] || normalizedToken;
+    const t = THEMES[themeName];
+    if (!t) {
+      const all = new Set(normalizedToken ? [normalizedToken] : []);
+      return { strong: all, weak: new Set(), all };
+    }
+    const strong = new Set([...(t.core||[]), ...(t.trunk||[])].map(normalizeTag).filter(Boolean));
+    const weak = new Set([...(t.supports||[]), ...(t.next||[])].map(normalizeTag).filter(Boolean));
+    const all = new Set([...strong, ...weak]);
+    return { strong, weak, all, themeName };
+  }
+
+
+
+  function cellId(sem, unit){ return `${sem}-${unit}`; }
+
+  function escRe(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+  function highlightText(text, keywords){
+    if(!keywords || keywords.length===0) return text;
+    const ks = Array.from(new Set(keywords)).sort((a,b)=>b.length-a.length);
+    const pattern = ks.map(k=>escRe(k)).join("|");
+    if(!pattern) return text;
+    const re = new RegExp(`(${pattern})`, "g");
+    return text.replace(re, (m)=>`<button type="button" class="kw" data-kw="${m}" aria-pressed="false">${m}</button>`);
+  }
+
+  function renderGrid(){
+    const host = document.getElementById("grid");
+    const table = document.createElement("table");
+
+    const caption = document.createElement("caption");
+    caption.textContent = "小学语文要素全景图";
+    table.appendChild(caption);
+
+    const thead = document.createElement("thead");
+    const trh = document.createElement("tr");
+
+    const th0 = document.createElement("th");
+    th0.textContent = "学期\\单元";
+    th0.className = "sticky-left";
+    th0.setAttribute("scope", "col");
+    trh.appendChild(th0);
+
+    UNITS.forEach(u=>{
+      const th = document.createElement("th");
+      th.textContent = u;
+      th.setAttribute("scope", "col");
+      trh.appendChild(th);
+    });
+    thead.appendChild(trh);
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+
+    SEMESTERS.forEach(sem=>{
+      const tr = document.createElement("tr");
+
+      const th = document.createElement("th");
+      th.textContent = sem;
+      th.className = "sticky-left";
+      th.setAttribute("scope", "row");
+      tr.appendChild(th);
+
+      UNITS.forEach(u=>{
+        const td = document.createElement("td");
+        const id = cellId(sem,u);
+        td.dataset.cell = id;
+
+        const cell = document.createElement("div");
+        cell.className = "cell";
+
+        const itemsWrap = document.createElement("div");
+        itemsWrap.className = "items";
+
+        const items = DATA[id] || [];
+        if(items.length===0){
+          const empty = document.createElement("div");
+          empty.className = "item empty";
+          empty.textContent = "—";
+          itemsWrap.appendChild(empty);
+          td.dataset.keywords = "";
+        }else{
+          const allKw = new Set();
+          items.forEach(it => {
+            (it.keywords||[]).forEach(k=>allKw.add(normalizeTag(k)));
+            const auto = detectThemeTags(it.text);
+            auto.matchTags.forEach(t=>allKw.add(t));
+          });
+          td.dataset.keywords = Array.from(allKw).join("|");
+
+          items.forEach(it=>{
+            const div = document.createElement("div");
+            div.className = "item";
+            const displayTags = new Set([...(it.keywords||[])]);
+            const auto = detectThemeTags(it.text);
+            auto.displayTags.forEach(t => displayTags.add(t));
+            const tagArr = Array.from(displayTags);
+            div.innerHTML = highlightText(it.text, tagArr);
+            itemsWrap.appendChild(div);
+          });
+        }
+
+        cell.appendChild(itemsWrap);
+        td.appendChild(cell);
+        tr.appendChild(td);
+      });
+
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    host.innerHTML = "";
+    host.appendChild(table);
+
+    const triggerKw = (rawKw)=>{
+      const kw = normalizeTag(rawKw);
+      if(mode === "theme"){
+        const token = THEME_INDEX[kw] || kw;
+        // 再点一次同一主题/词：取消
+        if(activeToken === token) setActive(null, null, null);
+        else setActive(token, rawKw, "keyword");
+      }else{
+        if(activeToken === kw) setActive(null, null, null);
+        else setActive(kw, rawKw, "keyword");
+      }
+    };
+
+    // keyword click (event delegation)
+    table.addEventListener("click", (e)=>{
+      const t = e.target;
+      if(t && t.classList && t.classList.contains("kw")){
+        triggerKw(t.dataset.kw);
+      }
+    });
+
+    applyState();
+  }
+
+  function setActive(token, clickedKw=null, source=null){
+    activeToken = token ? normalizeTag(token) : null;
+    activeKw = clickedKw || activeToken;
+    activeSource = activeToken ? (source || activeSource || "keyword") : null;
+    applyState();
+    const label = document.getElementById("activeLabel");
+    if(!activeToken){
+      label.textContent = "当前：全部";
+      return;
+    }
+    const sets = getThemeSets(activeToken);
+    if(mode === "theme" && sets.themeName){
+      label.textContent = `当前：主题链·${sets.themeName}`;
+    }else{
+      label.textContent = `当前：${activeKw || activeToken}`;
+    }
+  }
+
+  function applyState(){
+    const sets = activeToken ? getThemeSets(activeToken) : null;
+
+    document.querySelectorAll("td[data-cell]").forEach(td=>{
+      td.classList.remove("dim","focus","focus-weak");
+      if(!sets || !activeToken) return;
+
+      const tags = (td.dataset.keywords || "").split("|").map(normalizeTag).filter(Boolean);
+      const hitStrong = tags.some(x => sets.strong.has(x));
+      const hitAny = tags.some(x => sets.all.has(x));
+
+      if(hitStrong) td.classList.add("focus");
+      else if(hitAny) td.classList.add("focus-weak");
+      else td.classList.add("dim");
+    });
+
+    // 关键词高亮：主题链模式下，strong 用 active（黑底），weak 用 weak（灰底）
+    document.querySelectorAll(".kw").forEach(btn=>{
+      btn.classList.remove("active","weak");
+      btn.setAttribute("aria-pressed", "false");
+      if(!sets || !activeToken) return;
+      const w = normalizeTag(btn.dataset.kw);
+      if(sets.strong.has(w)){
+        btn.classList.add("active");
+        btn.setAttribute("aria-pressed", "true");
+      }else if(sets.weak.has(w)){
+        btn.classList.add("weak");
+      }else if(mode === "word" && w === activeToken){
+        btn.classList.add("active");
+        btn.setAttribute("aria-pressed", "true");
+      }
+    });
+
+    document.querySelectorAll(".item").forEach(it=>{
+      if(it.classList.contains("empty")) return;
+      it.style.padding = compact ? "6px 8px" : "8px 10px";
+      it.style.borderRadius = compact ? "10px" : "12px";
+      it.style.fontSize = compact ? "12px" : "13px";
+    });
+
+    const modeBtn = document.getElementById("modeBtn");
+    if(modeBtn) modeBtn.setAttribute("aria-pressed", String(mode === "theme"));
+    const collapseBtn = document.getElementById("collapseBtn");
+    if(collapseBtn) collapseBtn.setAttribute("aria-pressed", String(compact));
+
+    // 顶部提示文案
+    const status = document.getElementById("status");
+    if(!activeToken){
+      status.textContent = "点击任意高亮词：相关单元保持清晰，其它单元变浅；再次点击取消。";
+    }else if(mode === "theme" && sets && sets.themeName){
+      status.textContent = `主题链模式：以「${sets.themeName}」为中心，主线更醒目，支撑与后续为虚线框。`;
+    }else{
+      status.textContent = `词面模式：只按「${activeKw || activeToken}」这个词进行联动。`;
+    }
+  }
+
+  document.getElementById("clearBtn").addEventListener("click", ()=>{
+    setActive(null, null, null);
+    renderThemeList();
+  });
+
+  document.getElementById("collapseBtn").addEventListener("click", ()=>{
+    compact = !compact;
+    applyState();
+  });
+
+  document.getElementById("modeBtn").addEventListener("click", ()=>{
+    mode = (mode === "theme") ? "word" : "theme";
+
+    if(mode === "word" && activeToken){
+      if(activeSource === "theme"){
+        const themeName = THEMES[activeToken] ? activeToken : (THEME_INDEX[activeToken] || null);
+        const core = themeName ? getThemeFirstCore(themeName) : null;
+        if(core){
+          activeToken = core.normalized;
+          activeKw = core.raw;
+          activeSource = "keyword";
+        }else{
+          setActive(null, null, null);
+        }
+      }else if(activeKw){
+        activeToken = normalizeTag(activeKw);
+      }
+    }
+
+    const btn = document.getElementById("modeBtn");
+    btn.textContent = mode === "theme" ? "高亮：主题链" : "高亮：词面";
+    btn.setAttribute("aria-pressed", String(mode === "theme"));
+
+    // 切换模式后重新计算高亮（保持当前选择）
+    applyState();
+    const label = document.getElementById("activeLabel");
+    if(activeToken){
+      const sets = getThemeSets(activeToken);
+      if(mode === "theme" && sets.themeName) label.textContent = `当前：主题链·${sets.themeName}`;
+      else label.textContent = `当前：${activeKw || activeToken}`;
+    }else{
+      label.textContent = "当前：全部";
+    }
+    renderThemeList();
+  });
+
+  renderGrid();
+  renderThemeList();
+  applyState();
+</script>
+</body>
+</html>

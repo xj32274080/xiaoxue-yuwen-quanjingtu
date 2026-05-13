@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="小学语文要素全景图：按 12 个学期、8 个单元梳理语文要素，并支持主题链联动和关键词筛选。" />
+  <meta name="description" content="小学语文要素全景图：按 12 个学期、8 个单元梳理语文要素，并支持多条主题链联动和关键词筛选。" />
   <meta name="theme-color" content="#f6f2ea" />
   <title>小学语文要素全景图</title>
   <style>
@@ -120,7 +120,7 @@
   
     .layout{ display:flex; gap:12px; align-items:flex-start; }
     .sidebar{
-      width:220px; flex:0 0 220px;
+      width:260px; flex:0 0 260px;
       background:var(--card); border:1px solid var(--bd); border-radius:14px;
       padding:10px; position:sticky; top:86px; max-height: calc(100vh - 110px);
       overflow:auto;
@@ -135,17 +135,21 @@
     }
     .stat b{ display:block; font-size:17px; line-height:1.1; color:var(--accent); }
     .stat span{ display:block; margin-top:4px; font-size:11px; color:var(--muted); }
+    #themeList{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
     .theme{
       border:1px solid var(--bd); background:#fff; color:var(--txt);
-      padding:8px 10px; border-radius:12px; cursor:pointer; user-select:none;
-      font-size:13px; line-height:1.2; margin-bottom:8px; text-align:left;
+      min-height:40px; padding:8px 8px; border-radius:10px; cursor:pointer; user-select:none;
+      font-size:13px; line-height:1.2; margin-bottom:0; text-align:center;
       width:100%; font-family:inherit; appearance:none; -webkit-appearance:none;
     }
     .theme:hover{ filter:brightness(0.99); }
     .theme:focus-visible{ outline:2px solid rgba(47,93,80,.28); outline-offset:2px; }
     .theme.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
-    .theme small{ display:block; margin-top:6px; font-size:12px; color:rgba(255,255,255,0.85); }
-    .theme:not(.active) small{ color:var(--muted); }
+    .theme small{ display:none; }
+    .theme-detail{
+      margin-top:10px; min-height:40px; border:1px solid var(--bd); border-radius:10px;
+      padding:9px 10px; background:#fffaf1; color:var(--muted); font-size:12px; line-height:1.45;
+    }
     .main{ flex:1 1 auto; min-width: 700px; }
 
     @media (max-width: 960px){
@@ -159,6 +163,7 @@
       }
       #themeList{ display:flex; gap:8px; min-width:max-content; }
       .theme{ width:auto; margin-bottom:0; flex:0 0 auto; white-space:nowrap; }
+      .theme-detail{ display:none; }
       .main{ min-width:0; }
       .scroll{ max-height:calc(100vh - 260px); }
       .scroll-hint{ display:block; }
@@ -192,9 +197,10 @@
         <div class="side-note">点主题：整条能力链联动高亮；再点一次取消。</div>
         <div class="stats" aria-label="数据概览">
           <div class="stat"><b id="unitCount">96</b><span>单元</span></div>
-          <div class="stat"><b id="themeCount">6</b><span>主题链</span></div>
+          <div class="stat"><b id="themeCount">14</b><span>主题链</span></div>
         </div>
         <div id="themeList" role="group" aria-label="主题链按钮组"></div>
+        <div class="theme-detail" id="themeDetail">选择一条主题链后，这里显示链条说明。</div>
       </div>
       <div class="main">
 <div class="scroll-hint">手机或窄屏可左右滑动查看 12 个学期。</div>
@@ -267,13 +273,84 @@
       trunk: ["查阅相关资料","收集资料","整理资料","整理材料的方法","策划","策划书","校园活动","介绍","说明","交流"],
       supports: ["信息提取","分类","要点","记录","表格","提问","整合"],
       next: ["综合性学习","项目化学习","主题探究","汇报","策划书"]
+    },
+
+    // 7) 朗读与默读链
+    "朗读默读": {
+      explain: "从读准读顺→读出语气→默读提速→按目的阅读",
+      core: ["朗读","默读","阅读"],
+      trunk: ["读准字音","读好","读好长句子","读好疑问句","读好祈使句","语气","重音","有感情地朗读","不出声默读","带着问题默读","阅读目的","阅读方法"],
+      supports: ["节奏","普通话","语调","停顿","问题","理解","注意力"],
+      next: ["批注阅读","快速阅读","按目的阅读","古典名著阅读"]
+    },
+
+    // 8) 联系生活链
+    "联系生活": {
+      explain: "从生活经验理解词句→联系现实表达看法",
+      core: ["联系生活","生活经验","生活实际"],
+      trunk: ["联系生活经验","联系生活实际","生活体验","结合生活","联系上下文和生活经验","结合实际"],
+      supports: ["理解词语","理解句子","表达","感受","看法","经验"],
+      next: ["迁移表达","真实情境","生活化习作","观点表达"]
+    },
+
+    // 9) 观察与描写链
+    "观察描写": {
+      explain: "从留心观察→连续观察→抓特点描写",
+      core: ["观察","描写"],
+      trunk: ["留心观察","仔细观察","连续观察","观察日记","静态描写","动态描写","动作","语言","神态","外貌","心理","细节"],
+      supports: ["变化","特点","场景","景物","写景","人物","事物"],
+      next: ["写观察日记","写景","写人","把特点写具体","动态静态结合"]
+    },
+
+    // 10) 表达与习作链
+    "表达习作": {
+      explain: "从说清想法→写清内容→有结构有感情地表达",
+      core: ["表达","习作","写作"],
+      trunk: ["写话","写日记","写清楚","围绕着一个意思写","分段表述","突出重点","列提纲","真情实感","中心意思","重点部分写具体"],
+      supports: ["感受","看法","想法","交流","语言","结构","顺序","重点"],
+      next: ["读后感","书信","倡议书","研究报告","策划书","作品梗概"]
+    },
+
+    // 11) 关键词句链
+    "关键词句": {
+      explain: "从圈出关键词句→借助证据理解段落与全文",
+      core: ["关键词","关键句","关键词句"],
+      trunk: ["抓住关键词句","借助关键语句","抓住关键句","关键语句","关键语句理解","概括一段话的大意"],
+      supports: ["段意","概括","主要内容","思想感情","提取","理解"],
+      next: ["证据意识","批注阅读","要点概括","观点提炼"]
+    },
+
+    // 12) 提问与批注链
+    "提问批注": {
+      explain: "从提出问题→解决问题→用批注记录思考",
+      core: ["提问","问题","批注"],
+      trunk: ["提出自己的问题","提出不懂的问题","试着解决","学习用批注的方法阅读","带着问题默读","从不同角度去思考"],
+      supports: ["思考","理解","阅读","记录","交流","质疑"],
+      next: ["问题意识","深度阅读","批注阅读","探究学习"]
+    },
+
+    // 13) 说明与介绍链
+    "说明介绍": {
+      explain: "从读懂说明性文章→学习说明方法→介绍事物",
+      core: ["说明","介绍"],
+      trunk: ["说明性文章","说明方法","基本的说明方法","介绍一种事物","把某一种事物介绍清楚","搜集资料","研究报告"],
+      supports: ["资料","要点","整理","表达","事物","特点","观点"],
+      next: ["说明文习作","研究报告","资料整合","清楚表达"]
+    },
+
+    // 14) 积累与运用链
+    "积累运用": {
+      explain: "从词句积累→语言品味→迁移到表达",
+      core: ["积累","运用"],
+      trunk: ["词句的积累和运用","语言的积累","积累语言","积累喜欢的语句","运用学到的词语","感受课文生动的语言"],
+      supports: ["词语","句子","语言","表达","朗读","仿写"],
+      next: ["迁移表达","语言运用","写话","习作"]
     }
   };
 
 
   const TAG_ALIASES = {
-    "关键词句": "关键词",
-    "抓住关键词句": "关键词",
+    "抓住关键词句": "关键词句",
     "关键语句": "关键句",
     "提取主要信息": "主要信息",
     "把握文章的主要内容": "主要内容",
@@ -315,12 +392,16 @@
   const THEME_INDEX = (() => {
     const idx = {};
     for (const [name, t] of Object.entries(THEMES)) {
-      const all = [...(t.core||[]), ...(t.trunk||[]), ...(t.supports||[]), ...(t.next||[])];
-      all.forEach(x => {
+      [name, ...(t.core||[])].forEach(x => {
+        const nx = normalizeTag(x);
+        if (nx) idx[nx] = name;
+      });
+    }
+    for (const [name, t] of Object.entries(THEMES)) {
+      [...(t.trunk||[]), ...(t.supports||[]), ...(t.next||[])].forEach(x => {
         const nx = normalizeTag(x);
         if (nx && !idx[nx]) idx[nx] = name;
       });
-      idx[normalizeTag(name)] = name;
     }
     return idx;
   })();
@@ -350,6 +431,7 @@
       btn.className = "theme" + (isActive ? " active" : "");
       btn.setAttribute("aria-pressed", String(isActive));
       const ex = (THEMES[name] && THEMES[name].explain) ? THEMES[name].explain : "";
+      btn.title = ex ? `${name}：${ex}` : name;
       btn.innerHTML = `<div>${name}</div><small>${ex}</small>`;
       btn.addEventListener("click", ()=>{
         // 点击主题：切到主题链模式，并联动；再点一次取消
@@ -365,6 +447,17 @@
       });
       host.appendChild(btn);
     });
+    renderThemeDetail(activeThemeName);
+  }
+
+  function renderThemeDetail(themeName){
+    const detail = document.getElementById("themeDetail");
+    if(!detail) return;
+    if(!themeName || !THEMES[themeName]){
+      detail.textContent = "选择一条主题链后，这里显示链条说明。";
+      return;
+    }
+    detail.textContent = `${themeName}：${THEMES[themeName].explain}`;
   }
 
   function renderStats(){

@@ -116,6 +116,11 @@
     td.focus .cell{ outline:2px solid var(--focus-outline); outline-offset:2px; border-radius:10px; }
     td.focus-weak .cell{ outline:2px dashed rgba(47,93,80,.18); outline-offset:2px; border-radius:10px; }
     td.search-hit .cell{ box-shadow:inset 0 0 0 2px rgba(185,101,59,.34); border-radius:10px; }
+    .reason{
+      display:none; margin-top:2px; color:var(--accent); font-size:11px; line-height:1.35;
+      background:#edf5f1; border:1px solid rgba(47,93,80,.18); border-radius:8px; padding:5px 7px;
+    }
+    td.focus .reason, td.focus-weak .reason{ display:block; }
     .legend{ font-size:12px; color:var(--muted); }
   
     .layout{ display:flex; gap:12px; align-items:flex-start; }
@@ -150,6 +155,8 @@
       margin-top:10px; min-height:40px; border:1px solid var(--bd); border-radius:10px;
       padding:9px 10px; background:#fffaf1; color:var(--muted); font-size:12px; line-height:1.45;
     }
+    .theme-detail b{ color:var(--txt); }
+    .theme-detail span{ display:block; margin-top:5px; }
     .main{ flex:1 1 auto; min-width: 700px; }
 
     @media (max-width: 960px){
@@ -163,7 +170,7 @@
       }
       #themeList{ display:flex; gap:8px; min-width:max-content; }
       .theme{ width:auto; margin-bottom:0; flex:0 0 auto; white-space:nowrap; }
-      .theme-detail{ display:none; }
+      .theme-detail{ min-width:260px; }
       .main{ min-width:0; }
       .scroll{ max-height:calc(100vh - 260px); }
       .scroll-hint{ display:block; }
@@ -457,7 +464,11 @@
       detail.textContent = "选择一条主题链后，这里显示链条说明。";
       return;
     }
-    detail.textContent = `${themeName}：${THEMES[themeName].explain}`;
+    const t = THEMES[themeName];
+    const core = (t.core || []).slice(0, 6).join("、");
+    const trunk = (t.trunk || []).slice(0, 8).join("、");
+    const supports = [...(t.supports || []), ...(t.next || [])].slice(0, 8).join("、");
+    detail.innerHTML = `<b>${themeName}</b>：${t.explain}<span>主依据：${core || "无"}</span><span>主线词：${trunk || "无"}</span><span>辅助词：${supports || "无"}</span>`;
   }
 
   function renderStats(){
@@ -501,6 +512,15 @@
     const weak = new Set([...(t.supports||[]), ...(t.next||[])].map(normalizeTag).filter(Boolean));
     const all = new Set([...strong, ...weak]);
     return { strong, weak, all, themeName };
+  }
+
+  function explainCellHit(tags, sets){
+    if(!sets || !activeToken) return "";
+    const strongHits = tags.filter(x => sets.strong.has(x));
+    const weakHits = tags.filter(x => sets.weak.has(x) && !strongHits.includes(x));
+    const hits = [...strongHits, ...weakHits].slice(0, 6);
+    if(!hits.length) return "";
+    return `依据：${hits.join("、")}`;
   }
 
 
@@ -597,6 +617,10 @@
             div.innerHTML = highlightText(it.text, tagArr);
             itemsWrap.appendChild(div);
           });
+          const reason = document.createElement("div");
+          reason.className = "reason";
+          reason.setAttribute("aria-label", "点亮依据");
+          itemsWrap.appendChild(reason);
         }
 
         cell.appendChild(itemsWrap);
@@ -664,13 +688,17 @@
       if(searchQuery && searchMatch) td.classList.add("search-hit");
 
       const tags = (td.dataset.keywords || "").split("|").map(normalizeTag).filter(Boolean);
+      const reason = td.querySelector(".reason");
+      if(reason) reason.textContent = "";
       if(sets && activeToken){
         const hitStrong = tags.some(x => sets.strong.has(x));
         const hitAny = tags.some(x => sets.all.has(x));
+        const reasonText = explainCellHit(tags, sets);
 
         if(hitStrong) td.classList.add("focus");
         else if(hitAny) td.classList.add("focus-weak");
         else td.classList.add("dim");
+        if(reason && reasonText) reason.textContent = reasonText;
       }
 
       if(searchQuery && !searchMatch) td.classList.add("dim");
@@ -698,6 +726,10 @@
       it.style.padding = compact ? "6px 8px" : "8px 10px";
       it.style.borderRadius = compact ? "10px" : "12px";
       it.style.fontSize = compact ? "12px" : "13px";
+    });
+    document.querySelectorAll(".reason").forEach(it=>{
+      it.style.padding = compact ? "4px 6px" : "5px 7px";
+      it.style.fontSize = compact ? "10px" : "11px";
     });
 
     const modeBtn = document.getElementById("modeBtn");
